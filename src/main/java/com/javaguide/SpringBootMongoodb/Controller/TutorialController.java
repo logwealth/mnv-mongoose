@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 @CrossOrigin(origins = "http://localhost:5050")
@@ -53,6 +54,16 @@ public class TutorialController {
         }
     }
 
+    //get tutorial by id:
+    @GetMapping("tutorials/{id}")
+    public ResponseEntity<Tutorial> getTutorialById(@PathVariable("id") String id){
+        Optional<Tutorial> tutorialData = tutorialRepository.findById(id);
 
+        if(tutorialData.isPresent()){
+            return new ResponseEntity<>(tutorialData.get(), HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 
 }
