@@ -66,4 +66,58 @@ public class TutorialController {
         }
     }
 
+    //published:
+    @GetMapping("tutorials/published")
+    public ResponseEntity<List<Tutorial>> findByPublished(){
+        try{
+            List<Tutorial> tutorials = tutorialRepository.findByPublished(true);
+            if(tutorials.isEmpty()){
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+            return new ResponseEntity<>(tutorials, HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    //update operation:
+    @PutMapping("tutorials/{id}")
+    public ResponseEntity<Tutorial> updateTutorial(@PathVariable("id") String id, @RequestBody Tutorial tutorial){
+        Optional<Tutorial> tutorialData = tutorialRepository.findById(id);
+        if(tutorialData.isPresent()){
+            Tutorial _tutorial = tutorialData.get();
+            _tutorial.setTitle(tutorial.getTitle());
+            _tutorial.setDescription(tutorial.getDescription());
+            _tutorial.setPublished(tutorial.getPublished());
+            return new ResponseEntity<>(tutorialRepository.save(_tutorial), HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    //deleted by id:
+    @DeleteMapping("tutorials/{id}")
+    public ResponseEntity<Tutorial> deleteTutorialById (@PathVariable("id") String id){
+        try{
+            tutorialRepository.deleteById(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+
+    //deleted all:
+    @DeleteMapping("/tutorials")
+    public ResponseEntity<Tutorial> deleteAllTutorial(){
+        try{
+            tutorialRepository.deleteAll();
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+
+
 }
